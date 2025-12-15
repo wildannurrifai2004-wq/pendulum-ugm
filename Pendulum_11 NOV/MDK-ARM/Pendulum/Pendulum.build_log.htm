@@ -27,7 +27,54 @@ Project File Date:  11/14/2025
 <h2>Output:</h2>
 *** Using Compiler 'V5.06 update 6 (build 750)', folder: 'C:\Keil_v5\ARM\ARMCC\Bin'
 Build target 'Pendulum'
-"Pendulum\Pendulum.axf" - 0 Error(s), 0 Warning(s).
+compiling main.c...
+..\Include\Encoder_db.h(68): warning:  #1035-D: single-precision operand implicitly converted to double-precision
+      float raw_theta_dot = dtheta / 0.001;
+..\Include\Encoder_db.h(72): warning:  #1035-D: single-precision operand implicitly converted to double-precision
+  	filtered_theta_dot_rad = 0.9 * filtered_theta_dot_rad +
+..\Include\Encoder_db.h(73): warning:  #1035-D: single-precision operand implicitly converted to double-precision
+                     (1.0f - 0.9) * raw_theta_dot;
+..\Include\COM_CDC.h(193): warning:  #1-D: last line of file ends without a newline
+  #endif
+..\Include\lipmcontrol.h(75): warning:  #1035-D: single-precision operand implicitly converted to double-precision
+      x_dot_cm_s = 0.99 * x_dot_cm_s +
+..\Include\lipmcontrol.h(76): warning:  #1035-D: single-precision operand implicitly converted to double-precision
+                  (1.0f - 0.99) * raw_x_dot;
+..\Include\lipmcontrol.h(80): warning:  #1035-D: single-precision operand implicitly converted to double-precision
+  double kinC=0.5f * J_p*0.6;
+..\Include\lipmcontrol.h(119): warning:  #1035-D: single-precision operand implicitly converted to double-precision
+      float E_des = 2.0f * m_p * g * l_p*1.05;  //14.7f;  // energi di posisi tegak atas dalam definisi ini
+..\Include\lipmcontrol.h(144): warning:  #1035-D: single-precision operand implicitly converted to double-precision
+  			}else if (v_cmd>0.1){
+..\Include\lipmcontrol.h(193): warning:  #1035-D: single-precision operand implicitly converted to double-precision
+  		e_x_int += e_x * 0.01;
+..\Include\lipmcontrol.h(202): warning:  #1035-D: single-precision operand implicitly converted to double-precision
+      float K_TH   = -2.50f*57.0*12.0;    // rad
+..\Include\lipmcontrol.h(203): warning:  #1035-D: single-precision operand implicitly converted to double-precision
+      const float K_TH_D = -0.030f*57.0*18.0;     // rad/s
+..\Include\lipmcontrol.h(247): warning:  #1035-D: single-precision operand implicitly converted to double-precision
+  			}else if (v_cmd>0.1){
+..\Include\lipmcontrol.h(283): warning:  #1035-D: single-precision operand implicitly converted to double-precision
+      float K_TH   = -2.50f*57.0*8.0;    // rad
+..\Include\lipmcontrol.h(284): warning:  #1035-D: single-precision operand implicitly converted to double-precision
+      const float K_TH_D = -0.030f*57.0*12.0;     // rad/s
+..\Include\lipmcontrol.h(314): warning:  #1035-D: single-precision operand implicitly converted to double-precision
+      v_cmd= v_cmd+u*0.03;
+..\Include\lipmcontrol.h(325): warning:  #1035-D: single-precision operand implicitly converted to double-precision
+  			}else if (v_cmd>0.1){
+..\Include\lipmcontrol.h(279): warning:  #177-D: variable "e_x_d"  was declared but never referenced
+      float e_x_d     = x_dot_cm_s;
+..\Include\lipmcontrol.h(285): warning:  #177-D: variable "K_X"  was declared but never referenced
+  		float K_X    = 8.0f;      // cm
+..\Include\lipmcontrol.h(287): warning:  #177-D: variable "K_X_D"  was declared but never referenced
+  		float K_X_D  = -0.8f;      // cm/s
+../Core/Src/main.c(429): warning:  #9-D: nested comment is not allowed
+      /* USER CODE END WHILE */
+../Core/Src/main.c: 21 warnings, 0 errors
+linking...
+Program Size: Code=33218 RO-data=918 RW-data=580 ZI-data=13948  
+FromELF: creating hex file...
+"Pendulum\Pendulum.axf" - 0 Error(s), 21 Warning(s).
 
 <h2>Software Packages used:</h2>
 
@@ -49,7 +96,7 @@ Package Vendor: Keil
 <h2>Collection of Component Files used:</h2>
 
    * Component: ARM::CMSIS:CORE:5.3.0
-Build Time Elapsed:  00:00:00
+Build Time Elapsed:  00:00:04
 </pre>
 </body>
 </html>

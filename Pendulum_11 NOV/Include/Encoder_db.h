@@ -69,8 +69,8 @@ void Baca_Encoder(){
 	
 		theta_dot_rad = DERIV_ALPHA * theta_dot_rad +
                    (1.0f - DERIV_ALPHA) * raw_theta_dot;
-	filtered_theta_dot_rad = 0.99 * filtered_theta_dot_rad +
-                   (1.0f - 0.99) * raw_theta_dot;
+	filtered_theta_dot_rad = 0.9 * filtered_theta_dot_rad +
+                   (1.0f - 0.9) * raw_theta_dot;
 									 
     // 4) Simpan sudut sekarang untuk loop berikutnya
     theta_rad = theta_rad_now;

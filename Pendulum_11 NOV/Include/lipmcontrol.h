@@ -21,7 +21,7 @@ const float Ts      = 0.01f;   // 10 ms loop control
 // --- Batas rel / posisi ---
 const float X_MIN   = 5.0f;    // cm (kiri)
 const float X_MAX   = 75.0f;   // cm (kanan)
-const float X_CENTER= 40.0f;   // cm (tengah rel, kira-kira)
+//const float X_CENTER= 40.0f;   // cm (tengah rel, kira-kira)
 
 // --- Batas sudut untuk masuk mode balance ---
 const float THETA_BALANCE_DEG = 10.0f;  // |theta| < ini -> kita anggap sudah di dekat atas
@@ -71,7 +71,7 @@ void update_states_from_sensors()
 
 
     // ---------------- posisi cart, sama seperti sebelumnya ----------------
-    float raw_x_dot = (cmX - last_x) / Ts; // cm/s
+    float raw_x_dot = (cmX - last_x) / 0.001; // cm/s
     x_dot_cm_s = 0.99 * x_dot_cm_s +
                 (1.0f - 0.99) * raw_x_dot;
     last_x = cmX;
@@ -116,19 +116,26 @@ float swingup_controller()
     // 1) Hitung energi
     E = energy_now;//0.5f * J_p * theta_dot_rad * theta_dot_rad
           //  + m_p * g * l_p * (1.0f + cosf(theta_rad));
-    float E_des = 15.0;//2.0f * m_p * g * l_p;  //14.7f;  // energi di posisi tegak atas dalam definisi ini
+    float E_des = 2.0f * m_p * g * l_p*1.05;  //14.7f;  // energi di posisi tegak atas dalam definisi ini
 		float E_tilde = E - E_des;            // selisih energi
     // 2) Gain energi (silakan tuning)
-    const float kE = 6.0f;   // coba 10..100, lihat respon
+    const float kE = 8.0f;   // coba 10..100, lihat respon
+		
 		if(degree>150 || degree<-150){
-			u_energy= kE * (E - E_des) * sgn(theta_dot_rad * cosf(theta_rad))* fabs(cosf(theta_rad));
+			if(theta_dot_rad * cosf(theta_rad)>0){
+				u_energy= kE * (E - E_des) * 1* fabs(cosf(theta_rad));
+			}else{
+				u_energy= kE * (E - E_des) * -1* fabs(cosf(theta_rad));
+			}
+		}else if(degree>90||degree<-90){
+			u_energy=u_energy/pow(1.06,fabs(theta_dot_rad)/4.0);
 		}else{
-			u_energy=u_energy/1.05;
+			u_energy=0;
 		}
 		float v_energy = shape_nonlinear(u_energy);
     // 3) Penjaga posisi: tarik ke tengah rel
     const float kx_swing = 0.5f;   // cm ? command
-    float x_err = cmX - X_CENTER;
+    float x_err = cmX - 40.0;
     float u_pos = -kx_swing * x_err;
 
     v_cmd =  u_pos+v_energy;//;   // di sini kita anggap "kecepatan cart target"
@@ -151,51 +158,145 @@ float swingup_controller()
 
     return setspeed;
 }
-float e_x ;
+float e_x ,e_x_int;
 float u ;
+float u_theta,u_theta_d,u_e_x,u_e_xd,u_e_xint;
+float braker=0;
+float degreemean=0;
+float X_CENTER;
+// Fs = 100 Hz (Ts = 0.01 s)
+const float const_a = 0.27f;   // cutoff sekitar 5 Hz
+const float const_b = 0.99f;   // drift DC pelan-pelan turun (~1 s time constant)
+int counte_x=0;
+int counte_xd=0;
+float e_x_d ;
 float balance_controller()
 {
+		
+		X_CENTER=40;
     // Error sudut dan posisi
     float e_theta   = theta_rad;              // 0 rad = atas
     float e_theta_d = filtered_theta_dot_rad;
+		// Cascade scheduling
+		counte_x++;
+		counte_xd++;
+		if(counte_xd>0){
+			counte_xd=0;
+			e_x_d  = x_dot_cm_s;
+		}
+		if(counte_x>0){
+			counte_x=0;
+			e_x       = (X_CENTER-cmX);//0.5*(X_CENTER-cmX)+0.5*fabs(X_CENTER-cmX)*(X_CENTER-cmX)/40.0 ;
+			
+		}
+      
+		e_x_int += e_x * 0.01;
+		if(e_x_int>40){
+			e_x_int=40;
+		}
+		if(e_x_int<-40){
+			e_x_int=40;
+		}
+    // Gain (silakan tuning, ini hanya contoh angka awal)
+
+    float K_TH   = -2.50f*57.0*12.0;    // rad
+    const float K_TH_D = -0.030f*57.0*18.0;     // rad/s
+		float K_X    = 3.0f;      // cm
+		
+		float K_X_D  = -1.6*2;//-0.8f;      // cm/s
+		float K_X_INT  = 0;//-1.0f;//-0.8f;      // cm/s
+
+		u_theta=K_TH   * e_theta;
+		u_theta_d=K_TH_D * e_theta_d;
+		u_e_x=K_X    * e_x;
+		u_e_xd=K_X_D  * e_x_d;
+		u_e_xint=K_X_INT*e_x_int;
+    u= -( u_theta
+               + u_theta_d
+               + u_e_x
+               + u_e_xd
+								+u_e_xint);
+		
+		
+    v_cmd= u;//v_cmd+(u-v_cmd)*0.7;
+		if(v_cmd>200){
+			v_cmd=200;
+		}else if(v_cmd<-200){
+			v_cmd=-200;
+		}
+		if(v_cmd<-0.1){
+				setspeed=-3400+v_cmd*180;
+				if(setspeed>0){
+					setspeed=0;
+				}
+			}else if (v_cmd>0.1){
+				setspeed=3400+v_cmd*180;
+				if(setspeed<0){
+					setspeed=0;
+				}
+			}else{
+				setspeed=0;
+			}
+		if(cmX<5.0||cmX>75){
+			setspeed=0;
+		}
+		if(degree>20.0||degree<-20){
+			setspeed=0;
+		}
+    // clamp
+    if (setspeed >  speed_clamp) setspeed =  speed_clamp;
+    if (setspeed < -speed_clamp) setspeed = -speed_clamp;
+
+    return setspeed;
+}
+
+float balance_controller2()
+{
+		
+		X_CENTER=40;
+    // Error sudut dan posisi
+		e_x       =  (X_CENTER-cmX);
+    float e_theta   = theta_rad;//+e_x/400;              // 0 rad = atas
+    float e_theta_d = filtered_theta_dot_rad;
 	
-    e_x       =  X_CENTER-cmX ;
+    //fabs(X_CENTER-cmX)*(X_CENTER-cmX)/40.0 ;
+		
     float e_x_d     = x_dot_cm_s;
 
     // Gain (silakan tuning, ini hanya contoh angka awal)
-    float K_TH   = -2.50f*57*12.0;    // rad
-		//if(degree<1&&degree>-1){
-		//	K_TH   = 0;//-2.50f*57*12.0;    // rad
-		//}
-    const float K_TH_D = -0.030f*57*16.0;     // rad/s
+
+    float K_TH   = -2.50f*57.0*8.0;    // rad
+    const float K_TH_D = -0.030f*57.0*12.0;     // rad/s
 		float K_X    = 8.0f;      // cm
-		float K_X_D  = -16.0f;      // cm/s
-		//if(degree<1 && degree>-1){
-		//	 K_X    = -4.0f;      // cm
-		//		K_X_D  = 0;//0.080.0f;      // cm/s
-		//}else{
-		//	 K_X    = 0;      // cm
-		//		K_X_D  = 0;//0.080.0f;      // cm/s
-		//}
-    u= -( K_TH   * e_theta
-               + K_TH_D * e_theta_d
-               + K_X    * e_x
-               + K_X_D  * e_x_d );
-		//if(e_x<-1){
-		//	u=u+20;
-		//}else if(e_x>1){
-		///	u=u-20;
-		//}
-		//if(u>80){
-		//	u=80;}
-		//else if(u<=-80){
-		//	u=-80;
-		//}
-    v_cmd= u;
+		
+		float K_X_D  = -0.8f;      // cm/s
+		
+		u_theta=K_TH   * e_theta;
+		u_theta_d=K_TH_D * e_theta_d;
+		u_e_x=0;//K_X    * e_x;
+		u_e_xd=0;//K_X_D  * e_x_d;
+    u= -( u_theta
+               + u_theta_d
+               + u_e_x
+               + u_e_xd );
+		
+	
+    v_cmd= v_cmd+u*0.03;
+		if(v_cmd>200){
+			v_cmd=200;
+		}else if(v_cmd<-200){
+			v_cmd=-200;
+		}
 		if(v_cmd<-0.1){
 				setspeed=-3400+v_cmd*180;
+				if(setspeed>0){
+					setspeed=0;
+				}
 			}else if (v_cmd>0.1){
 				setspeed=3400+v_cmd*180;
+				if(setspeed<0){
+					setspeed=0;
+				}
 			}else{
 				setspeed=0;
 			}

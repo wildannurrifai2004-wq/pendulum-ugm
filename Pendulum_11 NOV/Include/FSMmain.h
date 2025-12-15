@@ -82,6 +82,7 @@ void loopMain()
 			}
 			break;
 		case 4:{
+			loopSin();
 			targetspeed=(outsin-cmX)*5;
 			if(targetspeed<-0.1){
 				setspeed=-3400+targetspeed*180;
@@ -110,7 +111,7 @@ void loopMain()
 		case 6:
 			swingup_controller();
 			step_motor(setspeed);
-			if( (degree<20&&degree>-20)){
+			if( (degree<2&&degree>-2)){
 				state_main=7;
 			}
 			if(gJoy.buttons==2 ){

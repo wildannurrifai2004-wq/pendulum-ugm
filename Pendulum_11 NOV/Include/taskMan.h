@@ -19,7 +19,7 @@
 bool led;
 double task_delay[TASK_NUM] = {
  // 0.05, 0.01, 0.1, 0.01, 0.05, 0.2
-	0.05, 0.01, 0.1, 0.001, 0.02, 0.005
+	0.05, 0.005, 0.1, 0.001, 0.02, 0.005
 
 };
 char task_name[TASK_NUM][10]  = {
@@ -77,6 +77,7 @@ void loopTask() {
 						energy_now=calculateEnergy();
 						//swingup_controller();
 						loopMain();
+						
 						//loopSin();
             break;
           }
