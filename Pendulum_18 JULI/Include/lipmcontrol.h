@@ -150,9 +150,9 @@ float swingup_controller()
 
     v_cmd =  u_pos+v_energy;//;   // di sini kita anggap "kecepatan cart target"
 		if(v_cmd<-0.1){
-				setspeed=-4400+v_cmd*180;
+				setspeed=-3400+v_cmd*180;
 			}else if (v_cmd>0.1){
-				setspeed=4400+v_cmd*180;
+				setspeed=3400+v_cmd*180;
 			}else{
 				setspeed=0;
 			}
@@ -173,7 +173,7 @@ float u ;
 float u_theta,u_theta_d,u_e_x,u_e_xd,u_e_xint;
 float braker=0;
 float degreemean=0;
-float X_CENTER = 34.43;
+float X_CENTER = 34.5f;
 // Fs = 100 Hz (Ts = 0.01 s)
 const float const_a = 0.27f;   // cutoff sekitar 5 Hz
 const float const_b = 0.99f;   // drift DC pelan-pelan turun (~1 s time constant)
@@ -197,14 +197,14 @@ void stickMove(){
             X_CENTER += shift_rate;
             
             // Clamp X_CENTER ke batas aman
-            if (X_CENTER < 5.0f)  X_CENTER = 5.0f;
-            if (X_CENTER > 75.0f) X_CENTER = 75.0f;
+            if (X_CENTER < 10.0f) X_CENTER = 10.0f;
+            if (X_CENTER > 59.0f) X_CENTER = 59.0f;
         }
     }
     else {
         // Joystick timeout - kembali ke center default
         // Smooth transition ke 40cm
-        float target = 40.0f;
+        float target = 34.5f;
         float diff = target - X_CENTER;
         X_CENTER += diff * 0.01f;  // Slow drift back to center
     }
@@ -264,12 +264,12 @@ float balance_controller()
 			v_cmd=-200;
 		}
 		if(v_cmd<-0.1){
-				setspeed=-4400+v_cmd*180;
+				setspeed=-3400+v_cmd*180;
 				if(setspeed>0){
 					setspeed=0;
 				}
 			}else if (v_cmd>0.1){
-				setspeed=4400+v_cmd*180;
+				setspeed=3400+v_cmd*180;
 				if(setspeed<0){
 					setspeed=0;
 				}
@@ -292,7 +292,7 @@ float balance_controller()
 float balance_controller2()
 {
 		
-		X_CENTER=40;
+		X_CENTER = 34.5f;
     // Error sudut dan posisi
 		e_x       =  (X_CENTER-cmX);
     float e_theta   = theta_rad;//+e_x/400;              // 0 rad = atas
@@ -327,12 +327,12 @@ float balance_controller2()
 			v_cmd=-200;
 		}
 		if(v_cmd<-0.1){
-				setspeed=-4400+v_cmd*180;
+				setspeed=-3400+v_cmd*180;
 				if(setspeed>0){
 					setspeed=0;
 				}
 			}else if (v_cmd>0.1){
-				setspeed=4400+v_cmd*180;
+				setspeed=3400+v_cmd*180;
 				if(setspeed<0){
 					setspeed=0;
 				}
