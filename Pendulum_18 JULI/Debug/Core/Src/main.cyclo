@@ -1,0 +1,82 @@
+C:/Users/Lenovo/Documents/pendulum_UGM 3 swing up - GUI sederhana/pendulum-ugm-live-tuning/Pendulum_18 JULI/Include/Encoder_db.h:18:7:checkLimit	1
+C:/Users/Lenovo/Documents/pendulum_UGM 3 swing up - GUI sederhana/pendulum-ugm-live-tuning/Pendulum_18 JULI/Include/Encoder_db.h:25:6:enc2Degree	1
+C:/Users/Lenovo/Documents/pendulum_UGM 3 swing up - GUI sederhana/pendulum-ugm-live-tuning/Pendulum_18 JULI/Include/Encoder_db.h:28:6:enc2cm	1
+C:/Users/Lenovo/Documents/pendulum_UGM 3 swing up - GUI sederhana/pendulum-ugm-live-tuning/Pendulum_18 JULI/Include/Encoder_db.h:31:21:deg2rad	1
+C:/Users/Lenovo/Documents/pendulum_UGM 3 swing up - GUI sederhana/pendulum-ugm-live-tuning/Pendulum_18 JULI/Include/Encoder_db.h:40:6:Baca_Encoder	3
+C:/Users/Lenovo/Documents/pendulum_UGM 3 swing up - GUI sederhana/pendulum-ugm-live-tuning/Pendulum_18 JULI/Include/millis.h:9:11:millis	1
+C:/Users/Lenovo/Documents/pendulum_UGM 3 swing up - GUI sederhana/pendulum-ugm-live-tuning/Pendulum_18 JULI/Include/standardWithoutDelayStechoq.h:12:6:setWait	1
+C:/Users/Lenovo/Documents/pendulum_UGM 3 swing up - GUI sederhana/pendulum-ugm-live-tuning/Pendulum_18 JULI/Include/standardWithoutDelayStechoq.h:17:6:isBeeping	2
+C:/Users/Lenovo/Documents/pendulum_UGM 3 swing up - GUI sederhana/pendulum-ugm-live-tuning/Pendulum_18 JULI/Include/standardWithoutDelayStechoq.h:24:7:percentPassed	1
+C:/Users/Lenovo/Documents/pendulum_UGM 3 swing up - GUI sederhana/pendulum-ugm-live-tuning/Pendulum_18 JULI/Include/COM_CDC.h:25:20:parser_reset	1
+C:/Users/Lenovo/Documents/pendulum_UGM 3 swing up - GUI sederhana/pendulum-ugm-live-tuning/Pendulum_18 JULI/Include/COM_CDC.h:62:24:r_count	1
+C:/Users/Lenovo/Documents/pendulum_UGM 3 swing up - GUI sederhana/pendulum-ugm-live-tuning/Pendulum_18 JULI/Include/COM_CDC.h:63:24:r_free	1
+C:/Users/Lenovo/Documents/pendulum_UGM 3 swing up - GUI sederhana/pendulum-ugm-live-tuning/Pendulum_18 JULI/Include/COM_CDC.h:65:17:r_write	3
+C:/Users/Lenovo/Documents/pendulum_UGM 3 swing up - GUI sederhana/pendulum-ugm-live-tuning/Pendulum_18 JULI/Include/COM_CDC.h:70:17:r_read	3
+C:/Users/Lenovo/Documents/pendulum_UGM 3 swing up - GUI sederhana/pendulum-ugm-live-tuning/Pendulum_18 JULI/Include/COM_CDC.h:77:17:COM_Available	1
+C:/Users/Lenovo/Documents/pendulum_UGM 3 swing up - GUI sederhana/pendulum-ugm-live-tuning/Pendulum_18 JULI/Include/COM_CDC.h:78:17:COM_Read	1
+C:/Users/Lenovo/Documents/pendulum_UGM 3 swing up - GUI sederhana/pendulum-ugm-live-tuning/Pendulum_18 JULI/Include/COM_CDC.h:79:17:COM_Write	1
+C:/Users/Lenovo/Documents/pendulum_UGM 3 swing up - GUI sederhana/pendulum-ugm-live-tuning/Pendulum_18 JULI/Include/COM_CDC.h:86:6:Send_ResetACK	2
+C:/Users/Lenovo/Documents/pendulum_UGM 3 swing up - GUI sederhana/pendulum-ugm-live-tuning/Pendulum_18 JULI/Include/COM_CDC.h:107:6:Send_SwingACK	2
+C:/Users/Lenovo/Documents/pendulum_UGM 3 swing up - GUI sederhana/pendulum-ugm-live-tuning/Pendulum_18 JULI/Include/COM_CDC.h:133:6:Send_GainsACK	2
+C:/Users/Lenovo/Documents/pendulum_UGM 3 swing up - GUI sederhana/pendulum-ugm-live-tuning/Pendulum_18 JULI/Include/COM_CDC.h:159:13:joystick_parser_feed	35
+C:/Users/Lenovo/Documents/pendulum_UGM 3 swing up - GUI sederhana/pendulum-ugm-live-tuning/Pendulum_18 JULI/Include/COM_CDC.h:293:6:VCP_ReceiveHook	1
+C:/Users/Lenovo/Documents/pendulum_UGM 3 swing up - GUI sederhana/pendulum-ugm-live-tuning/Pendulum_18 JULI/Include/COM_CDC.h:297:6:VCP_TxCpltHook	1
+C:/Users/Lenovo/Documents/pendulum_UGM 3 swing up - GUI sederhana/pendulum-ugm-live-tuning/Pendulum_18 JULI/Include/COM_CDC.h:300:13:COM_PollAndParseJoystick	4
+C:/Users/Lenovo/Documents/pendulum_UGM 3 swing up - GUI sederhana/pendulum-ugm-live-tuning/Pendulum_18 JULI/Include/COM_CDC.h:312:6:loopCOM	6
+C:/Users/Lenovo/Documents/pendulum_UGM 3 swing up - GUI sederhana/pendulum-ugm-live-tuning/Pendulum_18 JULI/Include/COM_CDC.h:334:20:wr32	1
+C:/Users/Lenovo/Documents/pendulum_UGM 3 swing up - GUI sederhana/pendulum-ugm-live-tuning/Pendulum_18 JULI/Include/COM_CDC.h:335:20:wr64	1
+C:/Users/Lenovo/Documents/pendulum_UGM 3 swing up - GUI sederhana/pendulum-ugm-live-tuning/Pendulum_18 JULI/Include/COM_CDC.h:338:6:Send_ControlStatus	2
+C:/Users/Lenovo/Documents/pendulum_UGM 3 swing up - GUI sederhana/pendulum-ugm-live-tuning/Pendulum_18 JULI/Include/step_motor.h:18:6:step_motor	6
+C:/Users/Lenovo/Documents/pendulum_UGM 3 swing up - GUI sederhana/pendulum-ugm-live-tuning/Pendulum_18 JULI/Include/step_motor.h:47:6:stop	1
+C:/Users/Lenovo/Documents/pendulum_UGM 3 swing up - GUI sederhana/pendulum-ugm-live-tuning/Pendulum_18 JULI/Include/step_motor.h:51:6:geserKanan	3
+C:/Users/Lenovo/Documents/pendulum_UGM 3 swing up - GUI sederhana/pendulum-ugm-live-tuning/Pendulum_18 JULI/Include/step_motor.h:69:6:geserKiri	3
+C:/Users/Lenovo/Documents/pendulum_UGM 3 swing up - GUI sederhana/pendulum-ugm-live-tuning/Pendulum_18 JULI/Include/singen.h:13:6:loopSin	3
+C:/Users/Lenovo/Documents/pendulum_UGM 3 swing up - GUI sederhana/pendulum-ugm-live-tuning/Pendulum_18 JULI/Include/lipmcontrol.h:61:6:update_states_from_sensors	1
+C:/Users/Lenovo/Documents/pendulum_UGM 3 swing up - GUI sederhana/pendulum-ugm-live-tuning/Pendulum_18 JULI/Include/lipmcontrol.h:92:7:calculateEnergy	4
+C:/Users/Lenovo/Documents/pendulum_UGM 3 swing up - GUI sederhana/pendulum-ugm-live-tuning/Pendulum_18 JULI/Include/lipmcontrol.h:110:7:shape_nonlinear	2
+C:/Users/Lenovo/Documents/pendulum_UGM 3 swing up - GUI sederhana/pendulum-ugm-live-tuning/Pendulum_18 JULI/Include/lipmcontrol.h:124:7:swingup_controller	12
+C:/Users/Lenovo/Documents/pendulum_UGM 3 swing up - GUI sederhana/pendulum-ugm-live-tuning/Pendulum_18 JULI/Include/lipmcontrol.h:184:6:stickMove	5
+C:/Users/Lenovo/Documents/pendulum_UGM 3 swing up - GUI sederhana/pendulum-ugm-live-tuning/Pendulum_18 JULI/Include/lipmcontrol.h:213:7:balance_controller	17
+C:/Users/Lenovo/Documents/pendulum_UGM 3 swing up - GUI sederhana/pendulum-ugm-live-tuning/Pendulum_18 JULI/Include/lipmcontrol.h:292:7:balance_controller2	13
+C:/Users/Lenovo/Documents/pendulum_UGM 3 swing up - GUI sederhana/pendulum-ugm-live-tuning/Pendulum_18 JULI/Include/FSMmain.h:16:6:initTrial	1
+C:/Users/Lenovo/Documents/pendulum_UGM 3 swing up - GUI sederhana/pendulum-ugm-live-tuning/Pendulum_18 JULI/Include/FSMmain.h:23:6:resetControllerVariables	1
+C:/Users/Lenovo/Documents/pendulum_UGM 3 swing up - GUI sederhana/pendulum-ugm-live-tuning/Pendulum_18 JULI/Include/FSMmain.h:46:6:loopMain	45
+C:/Users/Lenovo/Documents/pendulum_UGM 3 swing up - GUI sederhana/pendulum-ugm-live-tuning/Pendulum_18 JULI/Include/taskMan.h:31:6:tes	1
+C:/Users/Lenovo/Documents/pendulum_UGM 3 swing up - GUI sederhana/pendulum-ugm-live-tuning/Pendulum_18 JULI/Include/taskMan.h:35:6:initTask	2
+C:/Users/Lenovo/Documents/pendulum_UGM 3 swing up - GUI sederhana/pendulum-ugm-live-tuning/Pendulum_18 JULI/Include/taskMan.h:43:6:loopTask	9
+C:/Users/Lenovo/Documents/pendulum_UGM 3 swing up - GUI sederhana/pendulum-ugm-live-tuning/Pendulum_18 JULI/Include/StandardNextion.h:49:6:Nextion_Init	1
+C:/Users/Lenovo/Documents/pendulum_UGM 3 swing up - GUI sederhana/pendulum-ugm-live-tuning/Pendulum_18 JULI/Include/StandardNextion.h:64:6:Nextion_SendCommand	1
+C:/Users/Lenovo/Documents/pendulum_UGM 3 swing up - GUI sederhana/pendulum-ugm-live-tuning/Pendulum_18 JULI/Include/StandardNextion.h:70:6:Nextion_SendText	1
+C:/Users/Lenovo/Documents/pendulum_UGM 3 swing up - GUI sederhana/pendulum-ugm-live-tuning/Pendulum_18 JULI/Include/StandardNextion.h:76:6:Nextion_SendNumber	1
+C:/Users/Lenovo/Documents/pendulum_UGM 3 swing up - GUI sederhana/pendulum-ugm-live-tuning/Pendulum_18 JULI/Include/StandardNextion.h:82:6:Nextion_SetProgressBar	2
+C:/Users/Lenovo/Documents/pendulum_UGM 3 swing up - GUI sederhana/pendulum-ugm-live-tuning/Pendulum_18 JULI/Include/StandardNextion.h:89:6:Nextion_SetSlider	1
+C:/Users/Lenovo/Documents/pendulum_UGM 3 swing up - GUI sederhana/pendulum-ugm-live-tuning/Pendulum_18 JULI/Include/StandardNextion.h:95:6:Nextion_SetPicture	1
+C:/Users/Lenovo/Documents/pendulum_UGM 3 swing up - GUI sederhana/pendulum-ugm-live-tuning/Pendulum_18 JULI/Include/StandardNextion.h:101:6:Nextion_ChangePage	1
+C:/Users/Lenovo/Documents/pendulum_UGM 3 swing up - GUI sederhana/pendulum-ugm-live-tuning/Pendulum_18 JULI/Include/StandardNextion.h:107:6:Nextion_SetBacklight	2
+C:/Users/Lenovo/Documents/pendulum_UGM 3 swing up - GUI sederhana/pendulum-ugm-live-tuning/Pendulum_18 JULI/Include/StandardNextion.h:114:6:Nextion_Available	1
+C:/Users/Lenovo/Documents/pendulum_UGM 3 swing up - GUI sederhana/pendulum-ugm-live-tuning/Pendulum_18 JULI/Include/StandardNextion.h:118:6:Nextion_ProcessData	2
+C:/Users/Lenovo/Documents/pendulum_UGM 3 swing up - GUI sederhana/pendulum-ugm-live-tuning/Pendulum_18 JULI/Include/StandardNextion.h:129:10:Nextion_GetBuffer	1
+C:/Users/Lenovo/Documents/pendulum_UGM 3 swing up - GUI sederhana/pendulum-ugm-live-tuning/Pendulum_18 JULI/Include/StandardNextion.h:133:10:Nextion_GetLength	1
+C:/Users/Lenovo/Documents/pendulum_UGM 3 swing up - GUI sederhana/pendulum-ugm-live-tuning/Pendulum_18 JULI/Include/StandardNextion.h:137:6:Nextion_ClearBuffer	1
+C:/Users/Lenovo/Documents/pendulum_UGM 3 swing up - GUI sederhana/pendulum-ugm-live-tuning/Pendulum_18 JULI/Include/StandardNextion.h:144:13:Nextion_GetString	3
+C:/Users/Lenovo/Documents/pendulum_UGM 3 swing up - GUI sederhana/pendulum-ugm-live-tuning/Pendulum_18 JULI/Include/StandardNextion.h:155:6:Nextion_UART_RxCallback	6
+../Core/Src/main.c:99:6:Encoder_Init	1
+../Core/Src/main.c:110:6:Reset_Enc	1
+../Core/Src/main.c:126:10:get_encoder	1
+../Core/Src/main.c:133:10:get_encoder1	1
+../Core/Src/main.c:142:6:limit_sens	3
+../Core/Src/main.c:166:6:HAL_UART_RxCpltCallback	3
+../Core/Src/main.c:180:6:Nextion_ProcessData_new	7
+../Core/Src/main.c:211:6:receive_from_nextion	5
+../Core/Src/main.c:248:6:Send_ENC	1
+../Core/Src/main.c:255:6:data_acak	2
+../Core/Src/main.c:272:6:send_to_Nextion	2
+../Core/Src/main.c:293:5:main	1
+../Core/Src/main.c:441:6:SystemClock_Config	3
+../Core/Src/main.c:487:13:MX_TIM2_Init	3
+../Core/Src/main.c:536:13:MX_TIM4_Init	3
+../Core/Src/main.c:585:13:MX_TIM12_Init	4
+../Core/Src/main.c:631:13:MX_USART2_UART_Init	2
+../Core/Src/main.c:664:13:MX_USART3_UART_Init	2
+../Core/Src/main.c:697:13:MX_GPIO_Init	1
+../Core/Src/main.c:763:6:Error_Handler	1
