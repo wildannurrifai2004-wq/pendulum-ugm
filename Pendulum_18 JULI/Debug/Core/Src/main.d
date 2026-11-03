@@ -32,29 +32,20 @@ Core/Src/main.o: ../Core/Src/main.c ../Core/Inc/main.h \
  ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_pcd_ex.h \
  ../USB_DEVICE/App/usb_device.h \
  ../Middlewares/ST/STM32_USB_Device_Library/Core/Inc/usbd_def.h \
- ../USB_DEVICE/Target/usbd_conf.h \
- C:/Users/Lenovo/Documents/pendulum_UGM\ 3\ swing\ up\ -\ GUI\ sederhana/pendulum-ugm-live-tuning/Pendulum_18\ JULI/Include/Encoder_db.h \
- C:/Users/Lenovo/Documents/pendulum_UGM\ 3\ swing\ up\ -\ GUI\ sederhana/pendulum-ugm-live-tuning/Pendulum_18\ JULI/Include/taskMan.h \
- C:/Users/Lenovo/Documents/pendulum_UGM\ 3\ swing\ up\ -\ GUI\ sederhana/pendulum-ugm-live-tuning/Pendulum_18\ JULI/Include/millis.h \
- C:/Users/Lenovo/Documents/pendulum_UGM\ 3\ swing\ up\ -\ GUI\ sederhana/pendulum-ugm-live-tuning/Pendulum_18\ JULI/Include/standardWithoutDelayStechoq.h \
- C:/Users/Lenovo/Documents/pendulum_UGM\ 3\ swing\ up\ -\ GUI\ sederhana/pendulum-ugm-live-tuning/Pendulum_18\ JULI/Include/Encoder_db.h \
- C:/Users/Lenovo/Documents/pendulum_UGM\ 3\ swing\ up\ -\ GUI\ sederhana/pendulum-ugm-live-tuning/Pendulum_18\ JULI/Include/COM_CDC.h \
- ../USB_DEVICE/App/usbd_cdc_if.h \
+ ../USB_DEVICE/Target/usbd_conf.h ../Include/Encoder_db.h \
+ ../Include/taskMan.h ../Include/millis.h \
+ ../Include/standardWithoutDelayStechoq.h ../Include/Encoder_db.h \
+ ../Include/COM_CDC.h ../USB_DEVICE/App/usbd_cdc_if.h \
  ../Middlewares/ST/STM32_USB_Device_Library/Class/CDC/Inc/usbd_cdc.h \
  ../Middlewares/ST/STM32_USB_Device_Library/Core/Inc/usbd_ioreq.h \
  ../Middlewares/ST/STM32_USB_Device_Library/Core/Inc/usbd_def.h \
  ../Middlewares/ST/STM32_USB_Device_Library/Core/Inc/usbd_core.h \
  ../Middlewares/ST/STM32_USB_Device_Library/Core/Inc/usbd_ioreq.h \
  ../Middlewares/ST/STM32_USB_Device_Library/Core/Inc/usbd_ctlreq.h \
- C:/Users/Lenovo/Documents/pendulum_UGM\ 3\ swing\ up\ -\ GUI\ sederhana/pendulum-ugm-live-tuning/Pendulum_18\ JULI/Include/global.h \
- C:/Users/Lenovo/Documents/pendulum_UGM\ 3\ swing\ up\ -\ GUI\ sederhana/pendulum-ugm-live-tuning/Pendulum_18\ JULI/Include/compiler.h \
- C:/Users/Lenovo/Documents/pendulum_UGM\ 3\ swing\ up\ -\ GUI\ sederhana/pendulum-ugm-live-tuning/Pendulum_18\ JULI/Include/step_motor.h \
- C:/Users/Lenovo/Documents/pendulum_UGM\ 3\ swing\ up\ -\ GUI\ sederhana/pendulum-ugm-live-tuning/Pendulum_18\ JULI/Include/singen.h \
- C:/Users/Lenovo/Documents/pendulum_UGM\ 3\ swing\ up\ -\ GUI\ sederhana/pendulum-ugm-live-tuning/Pendulum_18\ JULI/Include/FSMmain.h \
- C:/Users/Lenovo/Documents/pendulum_UGM\ 3\ swing\ up\ -\ GUI\ sederhana/pendulum-ugm-live-tuning/Pendulum_18\ JULI/Include/lipmcontrol.h \
- C:/Users/Lenovo/Documents/pendulum_UGM\ 3\ swing\ up\ -\ GUI\ sederhana/pendulum-ugm-live-tuning/Pendulum_18\ JULI/Include/StandardNextion.h \
- C:/Users/Lenovo/Documents/pendulum_UGM\ 3\ swing\ up\ -\ GUI\ sederhana/pendulum-ugm-live-tuning/Pendulum_18\ JULI/Include/step_motor.h \
- C:/Users/Lenovo/Documents/pendulum_UGM\ 3\ swing\ up\ -\ GUI\ sederhana/pendulum-ugm-live-tuning/Pendulum_18\ JULI/Include/COM_CDC.h
+ ../Include/global.h ../Include/compiler.h ../Include/step_motor.h \
+ ../Include/singen.h ../Include/FSMmain.h ../Include/lipmcontrol.h \
+ ../Include/StandardNextion.h ../Include/step_motor.h \
+ ../Include/COM_CDC.h
 ../Core/Inc/main.h:
 ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal.h:
 ../Core/Inc/stm32f4xx_hal_conf.h:
@@ -90,12 +81,12 @@ Core/Src/main.o: ../Core/Src/main.c ../Core/Inc/main.h \
 ../USB_DEVICE/App/usb_device.h:
 ../Middlewares/ST/STM32_USB_Device_Library/Core/Inc/usbd_def.h:
 ../USB_DEVICE/Target/usbd_conf.h:
-C:/Users/Lenovo/Documents/pendulum_UGM\ 3\ swing\ up\ -\ GUI\ sederhana/pendulum-ugm-live-tuning/Pendulum_18\ JULI/Include/Encoder_db.h:
-C:/Users/Lenovo/Documents/pendulum_UGM\ 3\ swing\ up\ -\ GUI\ sederhana/pendulum-ugm-live-tuning/Pendulum_18\ JULI/Include/taskMan.h:
-C:/Users/Lenovo/Documents/pendulum_UGM\ 3\ swing\ up\ -\ GUI\ sederhana/pendulum-ugm-live-tuning/Pendulum_18\ JULI/Include/millis.h:
-C:/Users/Lenovo/Documents/pendulum_UGM\ 3\ swing\ up\ -\ GUI\ sederhana/pendulum-ugm-live-tuning/Pendulum_18\ JULI/Include/standardWithoutDelayStechoq.h:
-C:/Users/Lenovo/Documents/pendulum_UGM\ 3\ swing\ up\ -\ GUI\ sederhana/pendulum-ugm-live-tuning/Pendulum_18\ JULI/Include/Encoder_db.h:
-C:/Users/Lenovo/Documents/pendulum_UGM\ 3\ swing\ up\ -\ GUI\ sederhana/pendulum-ugm-live-tuning/Pendulum_18\ JULI/Include/COM_CDC.h:
+../Include/Encoder_db.h:
+../Include/taskMan.h:
+../Include/millis.h:
+../Include/standardWithoutDelayStechoq.h:
+../Include/Encoder_db.h:
+../Include/COM_CDC.h:
 ../USB_DEVICE/App/usbd_cdc_if.h:
 ../Middlewares/ST/STM32_USB_Device_Library/Class/CDC/Inc/usbd_cdc.h:
 ../Middlewares/ST/STM32_USB_Device_Library/Core/Inc/usbd_ioreq.h:
@@ -103,12 +94,12 @@ C:/Users/Lenovo/Documents/pendulum_UGM\ 3\ swing\ up\ -\ GUI\ sederhana/pendulum
 ../Middlewares/ST/STM32_USB_Device_Library/Core/Inc/usbd_core.h:
 ../Middlewares/ST/STM32_USB_Device_Library/Core/Inc/usbd_ioreq.h:
 ../Middlewares/ST/STM32_USB_Device_Library/Core/Inc/usbd_ctlreq.h:
-C:/Users/Lenovo/Documents/pendulum_UGM\ 3\ swing\ up\ -\ GUI\ sederhana/pendulum-ugm-live-tuning/Pendulum_18\ JULI/Include/global.h:
-C:/Users/Lenovo/Documents/pendulum_UGM\ 3\ swing\ up\ -\ GUI\ sederhana/pendulum-ugm-live-tuning/Pendulum_18\ JULI/Include/compiler.h:
-C:/Users/Lenovo/Documents/pendulum_UGM\ 3\ swing\ up\ -\ GUI\ sederhana/pendulum-ugm-live-tuning/Pendulum_18\ JULI/Include/step_motor.h:
-C:/Users/Lenovo/Documents/pendulum_UGM\ 3\ swing\ up\ -\ GUI\ sederhana/pendulum-ugm-live-tuning/Pendulum_18\ JULI/Include/singen.h:
-C:/Users/Lenovo/Documents/pendulum_UGM\ 3\ swing\ up\ -\ GUI\ sederhana/pendulum-ugm-live-tuning/Pendulum_18\ JULI/Include/FSMmain.h:
-C:/Users/Lenovo/Documents/pendulum_UGM\ 3\ swing\ up\ -\ GUI\ sederhana/pendulum-ugm-live-tuning/Pendulum_18\ JULI/Include/lipmcontrol.h:
-C:/Users/Lenovo/Documents/pendulum_UGM\ 3\ swing\ up\ -\ GUI\ sederhana/pendulum-ugm-live-tuning/Pendulum_18\ JULI/Include/StandardNextion.h:
-C:/Users/Lenovo/Documents/pendulum_UGM\ 3\ swing\ up\ -\ GUI\ sederhana/pendulum-ugm-live-tuning/Pendulum_18\ JULI/Include/step_motor.h:
-C:/Users/Lenovo/Documents/pendulum_UGM\ 3\ swing\ up\ -\ GUI\ sederhana/pendulum-ugm-live-tuning/Pendulum_18\ JULI/Include/COM_CDC.h:
+../Include/global.h:
+../Include/compiler.h:
+../Include/step_motor.h:
+../Include/singen.h:
+../Include/FSMmain.h:
+../Include/lipmcontrol.h:
+../Include/StandardNextion.h:
+../Include/step_motor.h:
+../Include/COM_CDC.h:

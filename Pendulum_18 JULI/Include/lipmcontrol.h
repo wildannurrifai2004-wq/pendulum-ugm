@@ -126,16 +126,17 @@ float swingup_controller()
     // 1) Hitung energi
     E = energy_now;//0.5f * J_p * theta_dot_rad * theta_dot_rad
           //  + m_p * g * l_p * (1.0f + cosf(theta_rad));
-    float E_des = 2.0f * m_p * g * l_p * gSwing.margin_E;  //14.7f;  // energi di posisi tegak atas dalam definisi ini
-		float E_tilde = E - E_des;            // selisih energi
-    // 2) Gain energi (disesuaikan untuk m_p = 0.158 kg agar magnitude u_energy ~50 saat ayunan awal)
-    float kE = gSwing.kE; // dinamis dari gSwing via GUI   // sebelumnya 8.0f saat massa salah (1.58 kg)
+    float E_des = 2.0f * m_p * g * l_p * gSwing.margin_E;  // energi di posisi tegak atas dalam definisi ini
+    // Normalisasi error energi relatif terhadap E_des (massa m_p saling meniadakan / cancel out)
+    float E_tilde = (E_des > 0.001f) ? ((E - E_des) / E_des) : 0.0f;
+    // 2) Gain energi ternormalisasi (skala seragam untuk semua variasi panjang batang)
+    float kE = gSwing.kE; // dinamis dari gSwing via GUI
 		
 		if(degree>150 || degree<-150){
 			if(theta_dot_rad * cosf(theta_rad)>0){
-				u_energy= kE * (E - E_des) * 1* fabs(cosf(theta_rad));
+				u_energy= kE * E_tilde * 1.0f * fabs(cosf(theta_rad));
 			}else{
-				u_energy= kE * (E - E_des) * -1* fabs(cosf(theta_rad));
+				u_energy= kE * E_tilde * -1.0f * fabs(cosf(theta_rad));
 			}
 		}else if(degree>90||degree<-90){
 			u_energy=u_energy/pow(1.06,fabs(theta_dot_rad)/4.0);
