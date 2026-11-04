@@ -146,7 +146,7 @@ float swingup_controller()
 		float v_energy = shape_nonlinear(u_energy);
     // 3) Penjaga posisi: tarik ke tengah rel
     float kx_swing = gSwing.kx_swing; // dinamis dari gSwing via GUI   // cm -> command
-    float x_err = cmX - 40.0;
+    float x_err = cmX - 34.5f;
     float u_pos = -kx_swing * x_err;
 
     v_cmd =  u_pos+v_energy;//;   // di sini kita anggap "kecepatan cart target"

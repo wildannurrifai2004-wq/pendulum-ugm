@@ -4284,7 +4284,7 @@ float swingup_controller()
  80027f6:	4b42      	ldr	r3, [pc, #264]	@ (8002900 <swingup_controller+0x2d8>)
  80027f8:	685b      	ldr	r3, [r3, #4]
  80027fa:	60fb      	str	r3, [r7, #12]
-    float x_err = cmX - 40.0;
+    float x_err = cmX - 34.5f;
  80027fc:	4b4b      	ldr	r3, [pc, #300]	@ (800292c <swingup_controller+0x304>)
  80027fe:	e9d3 0100 	ldrd	r0, r1, [r3]
  8002802:	f04f 0200 	mov.w	r2, #0
@@ -4386,7 +4386,7 @@ float swingup_controller()
  8002924:	c0568000 	.word	0xc0568000
  8002928:	40100000 	.word	0x40100000
  800292c:	200002a0 	.word	0x200002a0
- 8002930:	40440000 	.word	0x40440000
+ 8002930:	40414000 	.word	0x40414000
  8002934:	20001560 	.word	0x20001560
  8002938:	43340000 	.word	0x43340000
  800293c:	45548000 	.word	0x45548000
