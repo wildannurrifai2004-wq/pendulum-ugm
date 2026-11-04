@@ -17,6 +17,7 @@ from lib_data import DataLogger
 from lib_udp import UDPBroadcaster
 from lib_metrics import PerformanceMetrics
 from lib_session_log import SessionLogger
+from lib_chirp import SafetySupervisor, ChirpGenerator
 
 # ============================================================
 # KONFIGURASI PERSISTEN
@@ -101,6 +102,10 @@ pendulum_state = {
     "swing_sent"      : False,
     "setspeed"        : 0.0,     # kecepatan set point dari STM32
     "rpm"             : 0.0,     # RPM motor (dihitung dari setspeed)
+    "v_cart"          : 0.0,     # Kecepatan linier kereta (cm/s)
+    "a_cart"          : 0.0,     # Percepatan linier kereta (cm/s^2)
+    "chirp_freq"      : 0.0,     # Frekuensi instan chirp (Hz)
+    "safety_status"   : "SAFE",  # Status supervisi keamanan
 }
 state_lock = Lock()
 
@@ -267,6 +272,17 @@ class PendulumMonitor:
         self.auto_rec_start_time = None   # Timestamp awal rekam 10s
 
         self.saved_gains, self.saved_physics, self.saved_swing, self.angle_offset_deg, self.port = load_persistent_config()
+        self.safety = SafetySupervisor(
+            x_min_trip=10.0,
+            x_max_trip=70.0,
+            x_center=40.0,
+            v_max_safe=85.0,
+            a_max_safe=600.0,
+            pwm_max_clamp=18000
+        )
+        self.chirp_gen = ChirpGenerator()
+        self.chirp_active = False
+
         self.active_tab      = "lqr"
         self.swing_sent      = False
         self.swing_ack_time  = 0.0
@@ -298,9 +314,10 @@ class PendulumMonitor:
         px = self.main_width + 15   # panel x start
 
         if not hasattr(self, 'inputs'):
-            # Tab buttons
-            self.btn_tab_lqr   = Button(px,       12, 132, 28, "LQR & Fisika", custom_color=(45, 110, 160))
-            self.btn_tab_swing = Button(px + 138, 12, 132, 28, "Swing-Up",    custom_color=(50, 55, 75))
+            # Tab buttons (3 Tab: LQR, Swing-Up, Chirp ID)
+            self.btn_tab_lqr   = Button(px,       12, 88, 28, "LQR",      custom_color=(45, 110, 160))
+            self.btn_tab_swing = Button(px + 91,  12, 88, 28, "Swing-Up", custom_color=(50, 55, 75))
+            self.btn_tab_chirp = Button(px + 182, 12, 88, 28, "Chirp ID", custom_color=(50, 55, 75))
 
             # ── Gains inputs (LQR Standar 4 Gain) ──
             self.inputs = {
@@ -333,6 +350,17 @@ class PendulumMonitor:
             }
             self.btn_send_swing = Button(px, 322, 270, 32, "Kirim Parameter Swing-Up")
 
+            # ── Parameter Manuver Sinusoid (Chirp ID) ──
+            self.inputs_chirp = {
+                "f_start"  : InputField(px, 66,  270, 24, "Freq Awal f0 (Hz)", 0.2),
+                "f_end"    : InputField(px, 114, 270, 24, "Freq Akhir f1 (Hz)", 2.0),
+                "duration" : InputField(px, 162, 270, 24, "Durasi Sweep T (s)", 30.0),
+                "amplitude": InputField(px, 210, 270, 24, "Amplitudo Posisi (cm)", 14.0),
+            }
+            self.btn_chirp_start   = Button(px, 250, 270, 30, "START CHIRP & REC", custom_color=(40, 150, 80), custom_hover=(50, 180, 95))
+            self.btn_chirp_stop    = Button(px, 286, 270, 30, "STOP CHIRP / TRIP", custom_color=(180, 50, 50), custom_hover=(210, 60, 60))
+            self.btn_chirp_analyze = Button(px, 322, 270, 30, "ANALISA FCE & GAYA GESEK", custom_color=(45, 110, 160), custom_hover=(60, 140, 200))
+
             self.btn_start = Button(px,       475, 85, 34, "START")
             self.btn_save  = Button(px + 90,  475, 90, 34, "SAVE LOG")
             self.btn_reset = Button(px + 185, 475, 85, 34, "RESET")
@@ -348,7 +376,8 @@ class PendulumMonitor:
                                        color_on=C_REC_ON, color_off=C_REC_OFF)
         else:
             self.btn_tab_lqr.rect.x   = px
-            self.btn_tab_swing.rect.x = px + 138
+            self.btn_tab_swing.rect.x = px + 91
+            self.btn_tab_chirp.rect.x = px + 182
 
             for inp in self.inputs.values():
                 inp.rect.x = px
@@ -361,6 +390,12 @@ class PendulumMonitor:
             for inp in self.inputs_swing.values():
                 inp.rect.x = px
             self.btn_send_swing.rect.x = px
+
+            for inp in self.inputs_chirp.values():
+                inp.rect.x = px
+            self.btn_chirp_start.rect.x   = px
+            self.btn_chirp_stop.rect.x    = px
+            self.btn_chirp_analyze.rect.x = px
 
             self.btn_start.rect.x = px
             self.btn_save.rect.x  = px + 90
@@ -505,17 +540,60 @@ class PendulumMonitor:
         calibrated_theta = math.radians(calibrated_degree)
         rpm_value = (abs(setspeed) / SETSPEED_MAX) * RPM_MAX
 
+        now = time.time()
+        # Hitung kinematika real-time kereta (kecepatan & percepatan terfilter)
+        v_cart, a_cart = self.data_logger.kinematics.update(now, cmX)
+
+        # Pemeriksaan Keamanan Real-time (Anti keluar rel & overspeed)
+        is_safe, safety_msg = self.safety.check(cmX, v_cart, a_cart, limit_sw_hit=False)
+
+        if not is_safe:
+            if self.chirp_active or pendulum_state["running"]:
+                self.chirp_active = False
+                self.chirp_gen.stop()
+                with manual_lock:
+                    manual_state["buttons"] = 2  # Kirim STOP ke STM32
+                    manual_state["ax"]      = 0
+                    manual_state["held_cmd_key"] = "stop"
+                self.session_notice = f"[!] TRIP KEAMANAN: {self.safety.trip_reason}"
+                self.session_notice_time = now
+                print(f"[SAFETY TRIP] {self.safety.trip_reason}")
+
+        extra_meta = {"chirp_freq": 0.0, "safety_status": safety_msg}
+
+        # Manuver Swept-Sine (Chirp) Real-time Control
+        if self.chirp_active and is_safe:
+            ax_cmd, pwm_cmd, tgt_x, tgt_v, freq_val, is_done = self.chirp_gen.update(cmX, v_cart, self.safety)
+            with manual_lock:
+                manual_state["ax"] = ax_cmd
+                manual_state["buttons"] = 0
+            extra_meta["chirp_freq"] = freq_val
+            if is_done:
+                self.chirp_active = False
+                with manual_lock:
+                    manual_state["ax"] = 0
+                    manual_state["buttons"] = 0
+                if self.data_logger.is_recording():
+                    self.data_logger.set_recording(False)
+                    self.btn_record.text = "REC OFF"
+                self.session_notice = "✓ Manuver Sinusoid Selesai! Log tersimpan."
+                self.session_notice_time = now
+                print("[Chirp] Swept sine maneuver successfully finished.")
+
         with state_lock:
-            pendulum_state["cmX"]        = cmX
-            pendulum_state["raw_degree"] = degree
-            pendulum_state["degree"]     = calibrated_degree
-            pendulum_state["theta"]      = calibrated_theta
-            pendulum_state["x_center"]   = x_center
-            pendulum_state["setspeed"]   = setspeed
-            pendulum_state["rpm"]        = rpm_value
+            pendulum_state["cmX"]           = cmX
+            pendulum_state["raw_degree"]    = degree
+            pendulum_state["degree"]        = calibrated_degree
+            pendulum_state["theta"]         = calibrated_theta
+            pendulum_state["x_center"]      = x_center
+            pendulum_state["setspeed"]      = setspeed
+            pendulum_state["rpm"]           = rpm_value
+            pendulum_state["v_cart"]        = v_cart
+            pendulum_state["a_cart"]        = a_cart
+            pendulum_state["chirp_freq"]    = extra_meta["chirp_freq"]
+            pendulum_state["safety_status"] = safety_msg
 
         # Umpan ke metrics dan session logger
-        now = time.time()
         self.metrics.update(calibrated_theta, now, theta_dot=theta_dot)
         self.session_logger.update_peak_rpm(rpm_value)
 
@@ -546,7 +624,7 @@ class PendulumMonitor:
                     self.session_notice_time = now
 
         calibrated_sample = (logtick, calibrated_degree, cmX, setspeed, r1, theta_dot, calibrated_theta, x_center)
-        self.data_logger.handle_sample(calibrated_sample)
+        self.data_logger.handle_sample(calibrated_sample, extra_meta=extra_meta)
         self.udp_broadcaster.send_control_status(calibrated_sample)
 
     def on_gains_ack(self, gains_tuple):
@@ -579,7 +657,9 @@ class PendulumMonitor:
 
         for btn in (self.btn_apply, self.btn_start, self.btn_save, self.btn_reset,
                     self.btn_record, self.btn_udp, self.btn_rec_mode, self.btn_send_physics,
-                    self.btn_send_swing, self.btn_tab_lqr, self.btn_tab_swing, self.btn_reconnect):
+                    self.btn_send_swing, self.btn_tab_lqr, self.btn_tab_swing, self.btn_tab_chirp,
+                    self.btn_chirp_start, self.btn_chirp_stop, self.btn_chirp_analyze,
+                    self.btn_reconnect):
             btn.update_hover(mouse_pos)
 
         for event in pygame.event.get():
@@ -592,7 +672,14 @@ class PendulumMonitor:
                 self.screen = pygame.display.set_mode((self.width, self.height), pygame.RESIZABLE)
                 self._update_layout()
 
-            active_inps = (list(self.inputs.values()) + list(self.inputs_physics.values())) if self.active_tab == "lqr" else list(self.inputs_swing.values())
+            if self.active_tab == "lqr":
+                active_inps = list(self.inputs.values()) + list(self.inputs_physics.values())
+            elif self.active_tab == "swing":
+                active_inps = list(self.inputs_swing.values())
+            elif self.active_tab == "chirp":
+                active_inps = list(self.inputs_chirp.values())
+            else:
+                active_inps = []
             for inp in active_inps + [self.input_port]:
                 inp.handle_event(event)
 
@@ -601,6 +688,14 @@ class PendulumMonitor:
                     self.active_tab = "lqr"
                 elif self.btn_tab_swing.is_clicked(mouse_pos):
                     self.active_tab = "swing"
+                elif self.btn_tab_chirp.is_clicked(mouse_pos):
+                    self.active_tab = "chirp"
+                elif self.btn_chirp_start.is_clicked(mouse_pos):
+                    self.start_chirp_maneuver()
+                elif self.btn_chirp_stop.is_clicked(mouse_pos):
+                    self.stop_chirp_maneuver()
+                elif self.btn_chirp_analyze.is_clicked(mouse_pos):
+                    self.run_chirp_analysis()
                 elif self.btn_reconnect.is_clicked(mouse_pos):
                     self.setup_serial()
                 elif self.btn_send_swing.is_clicked(mouse_pos):
@@ -881,13 +976,21 @@ class PendulumMonitor:
         else:
             print("[Warning] Serial tidak terhubung — Reset sistem secara lokal.")
 
+        self.chirp_active = False
+        self.chirp_gen.stop()
+        self.safety.reset_trip()
+
         with state_lock:
-            pendulum_state["running"]  = False
-            pendulum_state["cmX"]      = X_CENTER_CM
-            pendulum_state["theta"]    = math.pi   # Posisi gantung bawah (180°)
-            pendulum_state["degree"]   = 180.0
-            pendulum_state["setspeed"] = 0.0
-            pendulum_state["rpm"]      = 0.0
+            pendulum_state["running"]       = False
+            pendulum_state["cmX"]           = X_CENTER_CM
+            pendulum_state["theta"]         = math.pi   # Posisi gantung bawah (180°)
+            pendulum_state["degree"]        = 180.0
+            pendulum_state["setspeed"]      = 0.0
+            pendulum_state["rpm"]           = 0.0
+            pendulum_state["v_cart"]        = 0.0
+            pendulum_state["a_cart"]        = 0.0
+            pendulum_state["chirp_freq"]    = 0.0
+            pendulum_state["safety_status"] = "SAFE"
 
         for inp in self.inputs.values():
             inp.enabled = True
@@ -953,8 +1056,10 @@ class PendulumMonitor:
         # ── Tab Navigation ──
         self.btn_tab_lqr.custom_color   = (45, 110, 160) if self.active_tab == "lqr" else (40, 44, 62)
         self.btn_tab_swing.custom_color = (45, 110, 160) if self.active_tab == "swing" else (40, 44, 62)
+        self.btn_tab_chirp.custom_color = (45, 110, 160) if self.active_tab == "chirp" else (40, 44, 62)
         self.btn_tab_lqr.draw(self.screen, self.font_small)
         self.btn_tab_swing.draw(self.screen, self.font_small)
+        self.btn_tab_chirp.draw(self.screen, self.font_small)
 
         if self.active_tab == "lqr":
             for inp in self.inputs.values():
@@ -990,6 +1095,37 @@ class PendulumMonitor:
             self.screen.blit(t1, (self.main_width + 18, tips_y + 24))
             self.screen.blit(t2, (self.main_width + 18, tips_y + 42))
             self.screen.blit(t3, (self.main_width + 18, tips_y + 60))
+
+        elif self.active_tab == "chirp":
+            for inp in self.inputs_chirp.values():
+                inp.draw(self.screen, self.font_small, self.font_input)
+            self.btn_chirp_start.draw(self.screen, self.font_med)
+            self.btn_chirp_stop.draw(self.screen, self.font_med)
+            self.btn_chirp_analyze.draw(self.screen, self.font_small)
+
+            # Box Info Status Chirp & Keamanan
+            box_y = self.btn_chirp_analyze.rect.bottom + 8
+            pygame.draw.rect(self.screen, (22, 26, 40),
+                             (self.main_width + 12, box_y, self.panel_width - 24, 86),
+                             border_radius=6)
+            pygame.draw.rect(self.screen, (45, 55, 80),
+                             (self.main_width + 12, box_y, self.panel_width - 24, 86),
+                             width=1, border_radius=6)
+
+            st_chirp = "RUNNING" if self.chirp_active else ("TRIPPED" if self.safety.tripped else "IDLE")
+            st_col   = (50, 220, 120) if self.chirp_active else ((255, 70, 70) if self.safety.tripped else (170, 180, 200))
+
+            t0 = self.font_tiny.render(f"Status Manuver : {st_chirp}", True, st_col)
+            t1 = self.font_tiny.render(f"Frekuensi Chirp: {self.chirp_gen.current_freq:.2f} Hz", True, (255, 220, 80))
+            saf_txt = f"TRIP: {self.safety.trip_reason[:22]}" if self.safety.tripped else "AMAN (Batas 10-70 cm)"
+            saf_col = (255, 100, 100) if self.safety.tripped else (100, 210, 255)
+            t2 = self.font_tiny.render(f"Supervisi Rel  : {saf_txt}", True, saf_col)
+            t3 = self.font_tiny.render("• Rekam otomatis saat Chirp ON", True, (150, 160, 180))
+
+            self.screen.blit(t0, (self.main_width + 18, box_y + 6))
+            self.screen.blit(t1, (self.main_width + 18, box_y + 24))
+            self.screen.blit(t2, (self.main_width + 18, box_y + 44))
+            self.screen.blit(t3, (self.main_width + 18, box_y + 64))
 
         # ── Divider sebelum START/RESET ──
         div2_y = 462
@@ -1173,11 +1309,17 @@ class PendulumMonitor:
         dir_str = "FWD" if setspeed >= 0 else "REV"
         rpm_label = f"Motor Speed  : {rpm_val:.0f} RPM ({dir_str})"
 
+        with state_lock:
+            v_val = pendulum_state.get("v_cart", 0.0)
+            a_val = pendulum_state.get("a_cart", 0.0)
+
         lines = [
-            (rpm_label,                        rpm_color),
-            (f"Rise Time    : {fmt(rt)} s",   C_RISE),
-            (f"Settling Time: {fmt(st)} s",   C_SETTLING),
-            (f"Overshoot    : {fmt(os_)}°",   C_OVERSHOOT),
+            (rpm_label,                          rpm_color),
+            (f"Cart Speed   : {v_val:+.1f} cm/s", (100, 200, 255)),
+            (f"Cart Accel   : {a_val:+.1f} cm/s²", (255, 180, 100)),
+            (f"Rise Time    : {fmt(rt)} s",     C_RISE),
+            (f"Settling Time: {fmt(st)} s",     C_SETTLING),
+            (f"Overshoot    : {fmt(os_)}°",     C_OVERSHOOT),
         ]
 
         box_w, box_h = 265, len(lines) * 22 + 12
@@ -1198,6 +1340,60 @@ class PendulumMonitor:
     # ─────────────────────────────────────────────────────────
     #  MAIN LOOP
     # ─────────────────────────────────────────────────────────
+    # ─────────────────────────────────────────────────────────
+    #  CHIRP MANEUVER & SYSTEM IDENTIFICATION ACTIONS
+    # ─────────────────────────────────────────────────────────
+    def start_chirp_maneuver(self):
+        f0  = self.inputs_chirp["f_start"].get_float(0.2)
+        f1  = self.inputs_chirp["f_end"].get_float(2.0)
+        dur = self.inputs_chirp["duration"].get_float(30.0)
+        amp = self.inputs_chirp["amplitude"].get_float(14.0)
+
+        self.chirp_gen = ChirpGenerator(
+            f_start=f0,
+            f_end=f1,
+            duration=dur,
+            amplitude=amp,
+            x_center=40.0,
+            mode=ChirpGenerator.MODE_POSITION
+        )
+        self.safety.reset_trip()
+        self.chirp_gen.start()
+        self.chirp_active = True
+
+        # Otomatis aktifkan perekaman CSV real-time dengan prefix log_chirp
+        self.data_logger.set_recording(True, prefix="log_chirp")
+        self.btn_record.text = "REC ON"
+
+        self.session_notice = f"✓ Chirp ({f0:.1f}-{f1:.1f} Hz) & Rekam Dimulai!"
+        self.session_notice_time = time.time()
+        print(f"[Chirp] Started swept sine maneuver: f0={f0} Hz, f1={f1} Hz, dur={dur} s, amp={amp} cm")
+
+    def stop_chirp_maneuver(self):
+        self.chirp_active = False
+        if hasattr(self, 'chirp_gen'):
+            self.chirp_gen.stop()
+        with manual_lock:
+            manual_state["ax"] = 0
+            manual_state["buttons"] = 2  # Perintah STOP ke STM32
+            manual_state["held_cmd_key"] = "stop"
+        if self.data_logger.is_recording():
+            self.data_logger.set_recording(False)
+            self.btn_record.text = "REC OFF"
+        self.session_notice = "Manuver Sinusoid Dihentikan."
+        self.session_notice_time = time.time()
+        print("[Chirp] Stopped swept sine maneuver.")
+
+    def run_chirp_analysis(self):
+        import subprocess
+        script_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "analyze_friction_deadband.py")
+        try:
+            subprocess.Popen([sys.executable, script_path], cwd=os.path.dirname(os.path.abspath(__file__)))
+            self.session_notice = "✓ Menjalankan Analisis FCE & Gaya Gesek..."
+        except Exception as e:
+            self.session_notice = f"[!] Gagal menjalankan analisis: {e}"
+        self.session_notice_time = time.time()
+
     def run(self):
         self.setup_serial()
 

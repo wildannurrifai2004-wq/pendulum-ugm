@@ -121,28 +121,30 @@ void loopMain()
 			
 		case 4:
 			loopSin();
-			targetspeed=(outsin-cmX)*5;
-			if(targetspeed<-0.1){
-				setspeed=-3400+targetspeed*180;
-			}else if (targetspeed>0.1){
-				setspeed=3400+targetspeed*180;
-			}else{
-				setspeed=0;
+			{
+				float e_x = (float)(gChirp.outsin - cmX);
+				float e_v = (float)(gChirp.target_vel - x_dot_cm_s);
+				float u_cmd = (160.0f * e_x) + (20.0f * e_v);
+
+				if (u_cmd > speed_clamp) u_cmd = speed_clamp;
+				if (u_cmd < -speed_clamp) u_cmd = -speed_clamp;
+				setspeed = (double)u_cmd;
 			}
 			
-			if(setspeed>speed_clamp){
-				setspeed=speed_clamp;
+			// SISTEM KEAMANAN KERETA: Anti keluar rel, anti overspeed, & limit switch
+			if ((cmX > 68.0) || (cmX < 12.0) || limitKanan || limitKiri || (fabsf(x_dot_cm_s) > 85.0f)) {
+				state_main = 5; // STOP & TRIP KEAMANAN
+				setspeed = 0;
+				step_motor(0);
+				break;
 			}
-			if(setspeed<-speed_clamp){
-				setspeed=-speed_clamp;
-			}
+			
 			step_motor(setspeed);
-			if(gJoy.buttons==2 ){
-				state_main=5;
+			if (gJoy.buttons == 2) {
+				state_main = 5;
+				setspeed = 0;
+				step_motor(0);
 			}
-			//if((cmX>75.0) || (cmX<5.0) || limitKanan || limitKiri){
-			//	state_main=5;
-			//}
 			break;
 		
 		case 6:

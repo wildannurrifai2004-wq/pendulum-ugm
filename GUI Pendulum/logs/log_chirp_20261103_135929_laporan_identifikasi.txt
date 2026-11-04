@@ -1,0 +1,21 @@
+==================================================================
+   LAPORAN IDENTIFIKASI DEADBAND, GAYA GESEK & FCE PENDULUM
+   Sumber Data: log_chirp_20261103_135929.csv
+==================================================================
+
+[1] DEADBAND:
+    Deadband Positif   : +0.00 PWM
+    Deadband Negatif   : 4141.55 PWM
+    Lebar Zona Deadband: -4141.55 PWM
+
+[2] PARAMETER GAYA GESEK (Coulomb + Viscous):
+    Fc (Coulomb Friction) : ~3690.78 PWM
+    bv (Viscous Friction) : ~162.5511 PWM/(cm/s)
+    Persamaan Maju (+)    : PWM = 2823.91 + 206.8393 * v
+    Persamaan Mundur (-)  : PWM = -4557.64 + 118.2628 * v
+
+[3] KINEMATIKA PENGUJIAN:
+    Posisi Min/Maks       : [0.05, 36.82] cm
+    Kecepatan Maksimum    : 57.85 cm/s
+    Percepatan Maksimum   : 1714.57 cm/s^2
+    Total Durasi          : 47.22 s

@@ -1,0 +1,1 @@
+datetime,timestamp,elapsed_s,logtick,degree,cmX,pwm,motor_rpm,cart_speed_cm_s,cart_accel_cm_s2,pendulum_omega_rad_s,chirp_freq_hz,safety_status,reserved1,reserved2,reserved3,reserved4

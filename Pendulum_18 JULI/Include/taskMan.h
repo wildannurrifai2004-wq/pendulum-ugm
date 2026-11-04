@@ -112,7 +112,7 @@ void loopTask() {
 						cs->reserved[1]=theta_dot_rad;
 						cs->reserved[2]=theta_rad;
 						//extern float X_CENTER;  // from lipmcontrol.h
-						cs->reserved[3] = X_CENTER;  // TAMBAH INI!
+						cs->reserved[3] = (double)x_dot_cm_s;  // Real-time Cart Speed (cm/s)
 						
 						Send_ControlStatus(cs);
 

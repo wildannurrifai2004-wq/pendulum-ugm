@@ -2,12 +2,12 @@
     "port": "COM12",
     "gains": {
         "K_TH": -1700.0,
-        "K_TH_D": -40.0,
-        "K_X": 2.0,
-        "K_X_D": -2.0
+        "K_TH_D": 0.0,
+        "K_X": 6.0,
+        "K_X_D": 0.0
     },
     "physics": {
-        "length_m": 0.0425,
+        "length_m": 0.1925,
         "mass_kg": 0.2
     },
     "swing": {
